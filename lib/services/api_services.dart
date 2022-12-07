@@ -32,11 +32,11 @@ class APIservices {
       // final response = await Dio()
       //     .get('https://www.themealdb.com/api/json/v1/1/categories.php');
 
-      log(response.data.toString());
-
       if (response.statusCode == 200) {
-        Map<String, dynamic> map = jsonDecode(response.data);
-        List<dynamic> foodData = map["feed"];
+        log(response.data.toString());
+        Map<String, dynamic> map = response.data;
+        //List<Map<String, dynamic>> foodData = map["feed"];
+        final List<dynamic> foodData = map["feed"];
 
         // final Map<String, dynamic> foodData = jsonDecode(response.data)['feed'];
 
