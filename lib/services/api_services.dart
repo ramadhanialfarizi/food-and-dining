@@ -35,10 +35,10 @@ class APIservices {
       log(response.data.toString());
 
       if (response.statusCode == 200) {
-        List<dynamic> foodData = jsonDecode(response.data)['feed'];
+        Map<String, dynamic> map = jsonDecode(response.data);
+        List<dynamic> foodData = map["feed"];
 
-        // final Map<String, dynamic> foodData =
-        //     jsonDecode(response.data)['categories'];
+        // final Map<String, dynamic> foodData = jsonDecode(response.data)['feed'];
 
         List<FoodModel> foodList = [];
 

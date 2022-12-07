@@ -10,9 +10,6 @@ class FoodModel {
   });
 
   FoodModel.fromJson(Map<String, dynamic> json) {
-    // name = json['display']['displayName'];
-    // images = json['display']['images'][0];
-    //id = json[];
     name = json['display']['displayName'];
     images = json['display']['images'][0];
   }
