@@ -1,6 +1,10 @@
 import 'package:admin_aplication/controller/food_provider.dart';
+import 'package:admin_aplication/controller/login_provider.dart';
+import 'package:admin_aplication/controller/register_provider.dart';
 import 'package:admin_aplication/pages/home_page.dart';
 import 'package:admin_aplication/pages/login_page.dart';
+import 'package:admin_aplication/pages/profile_page.dart';
+import 'package:admin_aplication/pages/signup_page.dart';
 import 'package:admin_aplication/pages/widget/splash_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +17,12 @@ void main() {
         ChangeNotifierProvider(
           create: (_) => FoodProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (_) => LoginProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => RegisterProvider(),
+        )
       ],
       child: const MyApp(),
     ),
@@ -42,6 +52,12 @@ class MyApp extends StatelessWidget {
           case '/home':
             return CupertinoPageRoute(
                 builder: (_) => const HomePage(), settings: settings);
+          case '/profile':
+            return CupertinoPageRoute(
+                builder: (_) => const ProfilePage(), settings: settings);
+          case '/signup':
+            return CupertinoPageRoute(
+                builder: (_) => const SignUpPage(), settings: settings);
         }
         return null;
       },

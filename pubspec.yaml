@@ -38,6 +38,11 @@ dependencies:
   cupertino_icons: ^1.0.2
   dio: ^4.0.6
   provider: ^6.0.4
+  email_validator: ^2.1.17
+  shared_preferences: ^2.0.15
+  sqflite: ^2.2.2
+  path: ^1.8.2
+  firebase_core: ^2.3.0
 
 dev_dependencies:
   flutter_test:

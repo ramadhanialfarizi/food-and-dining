@@ -13,7 +13,12 @@ class FoodProvider extends ChangeNotifier {
   FoodProviderState get state => _state;
 
   final APIservices apiServices = APIservices();
-  List<FoodModel> foodData = <FoodModel>[];
+  List<FoodModel> foodData = <FoodModel>[
+    FoodModel(
+        name: 'Italian Sausage and White Beans with Sage',
+        images:
+            'https://lh3.googleusercontent.com/C2qUbK9Q0n-GunClSkpZQExC_sqjKNM4dwH18BbiM1WwQiPyOgmMaEftwKBasHCmHBb9fIG1PxOwKhClmgwvjg')
+  ];
 
   void changeState(FoodProviderState viewState) {
     _state = viewState;

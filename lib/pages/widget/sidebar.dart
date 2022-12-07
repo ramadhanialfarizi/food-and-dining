@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SideBar extends StatefulWidget {
   const SideBar({super.key});
@@ -12,6 +13,22 @@ class SideBar extends StatefulWidget {
 }
 
 class _SideBarState extends State<SideBar> {
+  late SharedPreferences loginUser;
+  String userEmail = '';
+
+  void initialLogin() async {
+    loginUser = await SharedPreferences.getInstance();
+    setState(() {
+      userEmail = loginUser.getString('userEmail').toString();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initialLogin();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -19,14 +36,15 @@ class _SideBarState extends State<SideBar> {
         children: [
           UserAccountsDrawerHeader(
             accountName: Text(
-              'Rama',
+              'Welcome...',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
+            // USER EMAIL
             accountEmail: Text(
-              'ramadhani@gmail.com',
+              userEmail,
               style: TextStyle(
                 fontSize: 11,
                 color: Colors.white,
@@ -49,7 +67,7 @@ class _SideBarState extends State<SideBar> {
             ),
             onTap: () {
               // Update the state of the app.
-              // ...
+              Navigator.of(context).pushNamed('/profile');
             },
           ),
           SizedBox(
@@ -61,9 +79,6 @@ class _SideBarState extends State<SideBar> {
               right: 10,
             ),
             child: ElevatedButton.icon(
-              onPressed: () {
-                Navigator.of(context).pushReplacementNamed('/login');
-              },
               icon: Icon(Icons.account_circle, color: Colors.white),
               label: Text(
                 'Logout',
@@ -73,6 +88,11 @@ class _SideBarState extends State<SideBar> {
                 backgroundColor: MaterialStateProperty.all<Color>(
                     Color.fromARGB(194, 249, 7, 108)),
               ),
+              onPressed: () {
+                loginUser.setBool('login', false);
+                loginUser.remove('userEmail');
+                Navigator.of(context).pushReplacementNamed('/login');
+              },
             ),
           ),
         ],
