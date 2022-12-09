@@ -7,8 +7,15 @@ class RegisterProvider extends ChangeNotifier {
   bool obscureConfirmPassword = true;
   bool obscurePassword = true;
 
-  List<UserModel> userModel = <UserModel>[];
+  List<UserModel> _userModel = <UserModel>[];
   late DBhelper dbHelper;
+
+  List<UserModel> get userModel => _userModel;
+
+  RegisterProvider() {
+    dbHelper = DBhelper();
+    _getAllUserAcc();
+  }
 
   /// Change Password Obscure
   void changeObscurePassword() {
@@ -30,5 +37,30 @@ class RegisterProvider extends ChangeNotifier {
   /// Reset obscure Confirm password
   void resetObscureConfirm() {
     obscureConfirmPassword = true;
+  }
+
+  //// AUTHENTICATION FUNCTION
+  void _getAllUserAcc() async {
+    _userModel = await dbHelper.getUser();
+    notifyListeners();
+  }
+
+  Future<void> addUserAcc(UserModel userModel) async {
+    await dbHelper.insertUser(userModel);
+    _getAllUserAcc();
+  }
+
+  Future<UserModel> getUserAccById(int id) async {
+    return await dbHelper.getUserByID(id);
+  }
+
+  void updateUser(UserModel userModel) async {
+    await dbHelper.updateUserAccount(userModel);
+    _getAllUserAcc();
+  }
+
+  void deleteUser(int id) async {
+    await dbHelper.deleteUserAccount(id);
+    _getAllUserAcc();
   }
 }

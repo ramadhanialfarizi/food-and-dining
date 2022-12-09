@@ -1,6 +1,7 @@
 import 'package:admin_aplication/controller/food_provider.dart';
 import 'package:admin_aplication/model/food_model.dart';
 import 'package:admin_aplication/pages/widget/fail_load_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -16,6 +17,8 @@ class FoodListScreen extends StatefulWidget {
 class _FoodListScreenState extends State<FoodListScreen> {
   @override
   Widget build(BuildContext context) {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    CollectionReference admin = firestore.collection('admin');
     return Scaffold(
       body: Consumer<FoodProvider>(
         builder: (BuildContext context, FoodProvider provider, Widget? _) {
@@ -37,6 +40,8 @@ class _FoodListScreenState extends State<FoodListScreen> {
               child: ListView.builder(
                 itemCount: provider.foodData.length,
                 itemBuilder: (context, index) {
+                  String image = provider.foodData[index].images!;
+                  String name = provider.foodData[index].name ?? "Makanan";
                   return Padding(
                     padding: const EdgeInsets.only(top: 30.0),
                     child: Card(
@@ -52,8 +57,8 @@ class _FoodListScreenState extends State<FoodListScreen> {
                       child: Column(
                         children: [
                           Image.network(
-                            provider.foodData[index].images!,
-                            fit: BoxFit.fill,
+                            image,
+                            fit: BoxFit.cover,
                             scale: 2,
                           ),
                           const SizedBox(
@@ -65,16 +70,15 @@ class _FoodListScreenState extends State<FoodListScreen> {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    provider.foodData[index].name ?? "Makanan",
+                                    name,
                                     style: TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 17,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
                                 Expanded(
                                   child: ElevatedButton.icon(
-                                    onPressed: () {},
                                     icon: Icon(
                                       Icons.favorite,
                                       color: Color.fromARGB(194, 249, 7, 108),
@@ -85,6 +89,21 @@ class _FoodListScreenState extends State<FoodListScreen> {
                                           color:
                                               Color.fromARGB(194, 249, 7, 108)),
                                     ),
+                                    onPressed: () {
+                                      admin.add({
+                                        'image_food': image,
+                                        'name_food': name,
+                                      });
+
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content:
+                                              Text('Add Favorite Successfully'),
+                                          duration: Duration(milliseconds: 800),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 )
                               ],

@@ -63,6 +63,28 @@ class DBhelper {
     return result.map((e) => UserModel.fromMap(e)).first;
   }
 
+  /// READ DATA BY EMAIL
+  Future<UserModel> getUserbyEmail(String email) async {
+    final Database db = await database;
+    List<Map<String, dynamic>> result = await db.query(
+      tableName,
+      where: 'email = ? ',
+      whereArgs: [email],
+    );
+    return result.map((e) => UserModel.fromMap(e)).single;
+  }
+
+  /// READ DATA BY PASSWORD
+  Future<UserModel> getUserbyPasssword(String password) async {
+    final Database db = await database;
+    List<Map<String, dynamic>> result = await db.query(
+      tableName,
+      where: 'password = ? ',
+      whereArgs: [password],
+    );
+    return result.map((e) => UserModel.fromMap(e)).single;
+  }
+
   /// UPDATE USER DATA
   Future<void> updateUserAccount(UserModel userModel) async {
     final db = await database;

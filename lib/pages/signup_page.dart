@@ -1,4 +1,5 @@
 import 'package:admin_aplication/controller/register_provider.dart';
+import 'package:admin_aplication/model/user_model.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -205,6 +206,10 @@ class _SignUpPageState extends State<SignUpPage> {
                               final loginValid =
                                   formKey.currentState!.validate();
 
+                              String _firstName = firstName.text;
+                              String _lastName = lastName.text;
+                              String _email = email.text;
+                              String _password = password.text;
                               if (loginValid) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
@@ -212,6 +217,15 @@ class _SignUpPageState extends State<SignUpPage> {
                                     duration: Duration(milliseconds: 800),
                                   ),
                                 );
+
+                                final newUser = UserModel(
+                                  firstName: _firstName,
+                                  lastName: _lastName,
+                                  email: _email,
+                                  password: _password,
+                                );
+
+                                signUpProvider.addUserAcc(newUser);
 
                                 Navigator.of(context)
                                     .pushReplacementNamed('/login');
