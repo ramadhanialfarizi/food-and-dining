@@ -1,9 +1,11 @@
 import 'package:admin_aplication/pages/widget/data_empty.dart';
 import 'package:admin_aplication/pages/widget/fail_load_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:path/path.dart';
 
 class FavoriteListScreen extends StatefulWidget {
   const FavoriteListScreen({super.key});
@@ -13,10 +15,14 @@ class FavoriteListScreen extends StatefulWidget {
 }
 
 class _FavoriteListScreenState extends State<FavoriteListScreen> {
+  final curentUser = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     final Stream<QuerySnapshot> adminStream = FirebaseFirestore.instance
         .collection('admin')
+        .doc(curentUser.currentUser!.email)
+        .collection('favorite_data')
         .orderBy('name_food')
         .snapshots();
     FirebaseFirestore firestore = FirebaseFirestore.instance;

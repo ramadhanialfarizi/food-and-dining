@@ -1,10 +1,13 @@
 import 'package:admin_aplication/controller/register_provider.dart';
 import 'package:admin_aplication/model/user_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../controller/login_provider.dart';
 
@@ -16,6 +19,9 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  // late SharedPreferences loginUser;
+  // late bool user;
+
   final formKey = GlobalKey<FormState>();
   var firstNameKey = GlobalKey<FormState>();
   var lastNameKey = GlobalKey<FormState>();
@@ -28,6 +34,23 @@ class _SignUpPageState extends State<SignUpPage> {
   var email = TextEditingController();
   var password = TextEditingController();
   var confirmPassword = TextEditingController();
+
+  final currentUsers = FirebaseAuth.instance;
+
+  // void checkSignUp() async {
+  //   loginUser = await SharedPreferences.getInstance();
+  //   user = loginUser.getBool('login') ?? false;
+
+  //   if (user == true) {
+  //     Navigator.of(context).pushReplacementNamed('/home');
+  //   }
+  // }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   checkSignUp();
+  // }
 
   @override
   void dispose() {
@@ -43,6 +66,12 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget build(BuildContext context) {
     final signUpProvider =
         Provider.of<RegisterProvider>(context, listen: false);
+
+    FirebaseFirestore firebase = FirebaseFirestore.instance;
+    CollectionReference collectionUser = firebase.collection('user_data');
+    // .doc(currentUsers.currentUser!.uid)
+    // .collection('profile');
+
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -98,7 +127,6 @@ class _SignUpPageState extends State<SignUpPage> {
                           if (value == null || value.isEmpty) {
                             return '* Silahkan masukan Nama terakhir anda';
                           }
-
                           return null;
                         },
                       ),
@@ -189,57 +217,71 @@ class _SignUpPageState extends State<SignUpPage> {
                         width: double.infinity,
                         height: 40,
                         child: ElevatedButton.icon(
-                            icon: const Icon(Icons.account_circle,
+                          icon: const Icon(Icons.account_circle,
+                              color: Colors.white),
+                          label: Text(
+                            'Sign Up',
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
                                 color: Colors.white),
-                            label: Text(
-                              'Sign Up',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                  color: Colors.white),
-                            ),
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                  Color.fromARGB(194, 249, 7, 108)),
-                            ),
-                            onPressed: () {
-                              final loginValid =
-                                  formKey.currentState!.validate();
+                          ),
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Color.fromARGB(194, 249, 7, 108)),
+                          ),
+                          onPressed: () async {
+                            final loginValid = formKey.currentState!.validate();
 
-                              String _firstName = firstName.text;
-                              String _lastName = lastName.text;
-                              String _email = email.text;
-                              String _password = password.text;
-                              if (loginValid) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Signup Berhasil!!'),
-                                    duration: Duration(milliseconds: 800),
-                                  ),
-                                );
+                            String _firstName = firstName.text;
+                            String _lastName = lastName.text;
+                            String _email = email.text;
+                            String _password = password.text;
 
-                                final newUser = UserModel(
-                                  firstName: _firstName,
-                                  lastName: _lastName,
-                                  email: _email,
-                                  password: _password,
-                                );
+                            if (loginValid) {
+                              await FirebaseAuth.instance
+                                  .createUserWithEmailAndPassword(
+                                      email: _email, password: _password);
 
-                                signUpProvider.addUserAcc(newUser);
+                              // loginUser.setBool('login', true);
+                              // loginUser.setString('userEmail', _email);
 
-                                Navigator.of(context)
-                                    .pushReplacementNamed('/login');
-                              }
+                              collectionUser.add({
+                                "first_name": _firstName,
+                                "last_name": _lastName,
+                                "email": _email,
+                                "profil_picture": 'empty',
+                              });
 
-                              // String userEmail = email.text;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Signup Berhasil!!'),
+                                  duration: Duration(milliseconds: 800),
+                                ),
+                              );
+                              await FirebaseAuth.instance.signOut();
+                              Navigator.pop(context);
+                              //if (FirebaseAuth.instance.currentUser == null) {}
+                            }
+                            // final newUser = UserModel(
+                            //   firstName: _firstName,
+                            //   lastName: _lastName,
+                            //   email: _email,
+                            //   password: _password,
+                            // );
 
-                              // if (loginValid) {
-                              //   loginUser.setBool('login', true);
-                              //   loginUser.setString('userEmail', userEmail);
-                              // Navigator.of(context)
-                              //     .pushReplacementNamed('/login');
-                              //}
-                            }),
+                            //signUpProvider.addUserAcc(newUser);
+
+                            // String userEmail = email.text;
+
+                            // if (loginValid) {
+                            //   loginUser.setBool('login', true);
+                            //   loginUser.setString('userEmail', userEmail);
+                            // Navigator.of(context)
+                            //     .pushReplacementNamed('/login');
+                            //}
+                          },
+                        ),
                       ),
                     ],
                   ),

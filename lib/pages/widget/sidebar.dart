@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -14,13 +15,13 @@ class SideBar extends StatefulWidget {
 
 class _SideBarState extends State<SideBar> {
   late SharedPreferences loginUser;
-  String userEmail = '';
+  final userEmail = FirebaseAuth.instance;
 
   void initialLogin() async {
     loginUser = await SharedPreferences.getInstance();
-    setState(() {
-      userEmail = loginUser.getString('userEmail').toString();
-    });
+    // setState(() {
+    //   userEmail = loginUser.getString('userEmail').toString();
+    // });
   }
 
   @override
@@ -44,7 +45,7 @@ class _SideBarState extends State<SideBar> {
             ),
             // USER EMAIL
             accountEmail: Text(
-              userEmail,
+              userEmail.currentUser!.email as String,
               style: TextStyle(
                 fontSize: 11,
                 color: Colors.white,
@@ -88,9 +89,10 @@ class _SideBarState extends State<SideBar> {
                 backgroundColor: MaterialStateProperty.all<Color>(
                     Color.fromARGB(194, 249, 7, 108)),
               ),
-              onPressed: () {
+              onPressed: () async {
                 loginUser.setBool('login', false);
                 loginUser.remove('userEmail');
+                await FirebaseAuth.instance.signOut();
                 Navigator.of(context).pushReplacementNamed('/login');
               },
             ),

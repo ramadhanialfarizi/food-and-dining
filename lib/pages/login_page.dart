@@ -1,5 +1,6 @@
 import 'package:admin_aplication/controller/login_provider.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -134,22 +135,42 @@ class _LoginPageState extends State<LoginPage> {
                             backgroundColor: MaterialStateProperty.all<Color>(
                                 Color.fromARGB(194, 249, 7, 108)),
                           ),
-                          onPressed: () {
+                          onPressed: () async {
                             final loginValid = formKey.currentState!.validate();
 
                             String userEmail = email.text;
+                            String userPassword = password.text;
 
                             if (loginValid) {
-                              loginUser.setBool('login', true);
-                              loginUser.setString('userEmail', userEmail);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Login Berhasil!!'),
-                                  duration: Duration(milliseconds: 800),
-                                ),
-                              );
-                              Navigator.of(context)
-                                  .pushReplacementNamed('/home');
+                              if (FirebaseAuth.instance.currentUser == null) {
+                                try {
+                                  await FirebaseAuth.instance
+                                      .signInWithEmailAndPassword(
+                                          email: userEmail,
+                                          password: userPassword);
+
+                                  loginUser.setBool('login', true);
+                                  loginUser.setString('userEmail', userEmail);
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Login Berhasil!!'),
+                                      duration: Duration(milliseconds: 800),
+                                    ),
+                                  );
+                                  Navigator.of(context)
+                                      .pushReplacementNamed('/home');
+                                } on FirebaseAuthException catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      //content: Text(e.message.toString()),
+                                      content: Text('akun tidak ditemukan'),
+                                      duration:
+                                          const Duration(milliseconds: 800),
+                                    ),
+                                  );
+                                }
+                              }
                             }
                           },
                         ),
