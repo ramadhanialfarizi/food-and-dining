@@ -19,9 +19,6 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  // late SharedPreferences loginUser;
-  // late bool user;
-
   final formKey = GlobalKey<FormState>();
   var firstNameKey = GlobalKey<FormState>();
   var lastNameKey = GlobalKey<FormState>();
@@ -36,21 +33,6 @@ class _SignUpPageState extends State<SignUpPage> {
   var confirmPassword = TextEditingController();
 
   final currentUsers = FirebaseAuth.instance;
-
-  // void checkSignUp() async {
-  //   loginUser = await SharedPreferences.getInstance();
-  //   user = loginUser.getBool('login') ?? false;
-
-  //   if (user == true) {
-  //     Navigator.of(context).pushReplacementNamed('/home');
-  //   }
-  // }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   checkSignUp();
-  // }
 
   @override
   void dispose() {
@@ -239,29 +221,34 @@ class _SignUpPageState extends State<SignUpPage> {
                             String _password = password.text;
 
                             if (loginValid) {
-                              await FirebaseAuth.instance
-                                  .createUserWithEmailAndPassword(
-                                      email: _email, password: _password);
+                              try {
+                                await FirebaseAuth.instance
+                                    .createUserWithEmailAndPassword(
+                                        email: _email, password: _password);
 
-                              // loginUser.setBool('login', true);
-                              // loginUser.setString('userEmail', _email);
+                                collectionUser.add({
+                                  "first_name": _firstName,
+                                  "last_name": _lastName,
+                                  "email": _email,
+                                  "profil_picture": 'empty',
+                                });
 
-                              collectionUser.add({
-                                "first_name": _firstName,
-                                "last_name": _lastName,
-                                "email": _email,
-                                "profil_picture": 'empty',
-                              });
-
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Signup Berhasil!!'),
-                                  duration: Duration(milliseconds: 800),
-                                ),
-                              );
-                              await FirebaseAuth.instance.signOut();
-                              Navigator.pop(context);
-                              //if (FirebaseAuth.instance.currentUser == null) {}
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Signup Berhasil!!'),
+                                    duration: Duration(milliseconds: 800),
+                                  ),
+                                );
+                                await FirebaseAuth.instance.signOut();
+                                Navigator.pop(context);
+                              } on FirebaseAuthException catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('email sudah terdaftar'),
+                                    duration: Duration(milliseconds: 800),
+                                  ),
+                                );
+                              }
                             }
                             // final newUser = UserModel(
                             //   firstName: _firstName,
