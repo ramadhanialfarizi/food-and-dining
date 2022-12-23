@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -10,6 +11,8 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final userLogin = FirebaseAuth.instance;
+
   @override
   void initState() {
     super.initState();
@@ -19,8 +22,13 @@ class _SplashScreenState extends State<SplashScreen> {
   splashScreenStart() async {
     var duration = const Duration(seconds: 3);
     return Timer(duration, () {
-      Navigator.of(context).pushReplacementNamed('/login');
-      //Navigator.of(context).pushReplacementNamed('/home');
+      if (userLogin.currentUser == null) {
+        Navigator.of(context).pushReplacementNamed('/login');
+      } else {
+        Navigator.of(context).pushReplacementNamed('/home');
+      }
+
+      //Navigator.of(context).pushReplacementNamed('/login');
     });
   }
 

@@ -33,7 +33,7 @@ class APIservices {
       //     .get('https://www.themealdb.com/api/json/v1/1/categories.php');
 
       if (response.statusCode == 200) {
-        log(response.data.toString());
+        //log(response.data.toString());
         Map<String, dynamic> map = response.data;
         //List<Map<String, dynamic>> foodData = map["feed"];
         final List<dynamic> foodData = map["feed"];

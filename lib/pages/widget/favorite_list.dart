@@ -25,8 +25,13 @@ class _FavoriteListScreenState extends State<FavoriteListScreen> {
         .collection('favorite_data')
         .orderBy('name_food')
         .snapshots();
+
     FirebaseFirestore firestore = FirebaseFirestore.instance;
-    CollectionReference admin = firestore.collection('admin');
+
+    CollectionReference admin = firestore
+        .collection('admin')
+        .doc(curentUser.currentUser!.email)
+        .collection('favorite_data');
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(

@@ -1,6 +1,7 @@
 import 'package:admin_aplication/controller/food_provider.dart';
 import 'package:admin_aplication/controller/login_provider.dart';
 import 'package:admin_aplication/controller/register_provider.dart';
+import 'package:admin_aplication/pages/edit_profile_page.dart';
 import 'package:admin_aplication/pages/home_page.dart';
 import 'package:admin_aplication/pages/login_page.dart';
 import 'package:admin_aplication/pages/profile_page.dart';
@@ -65,6 +66,9 @@ class MyApp extends StatelessWidget {
           case '/signup':
             return CupertinoPageRoute(
                 builder: (_) => const SignUpPage(), settings: settings);
+          case '/edit_profile':
+            return CupertinoPageRoute(
+                builder: (_) => const EditProfilePages(), settings: settings);
         }
         return null;
       },

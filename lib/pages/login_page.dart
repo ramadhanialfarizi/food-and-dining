@@ -23,9 +23,9 @@ class _LoginPageState extends State<LoginPage> {
     loginUser = await SharedPreferences.getInstance();
     user = loginUser.getBool('login') ?? false;
 
-    if (user == true) {
-      Navigator.of(context).pushReplacementNamed('/home');
-    }
+    // if (user == true) {
+    //   //Navigator.of(context).pushReplacementNamed('/home');
+    // }
   }
 
   @override
